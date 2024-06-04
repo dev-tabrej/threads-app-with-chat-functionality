@@ -1,0 +1,10 @@
+.icon-container{
+    height: 40px;
+    width: 40px;
+    padding: 8px;
+    border-radius: 50%;
+
+}
+.icon-container:hover{
+    background-color: rgb(74, 71, 71);
+}
