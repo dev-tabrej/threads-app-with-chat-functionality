@@ -13,11 +13,12 @@ import {
   Text,
   useColorModeValue,
   Link,
+  useToast,
 } from "@chakra-ui/react";
 import { useState } from "react";
 import { ViewIcon, ViewOffIcon } from "@chakra-ui/icons";
 
-export default function SignupPage({ isloggedIn, setIsLoggedIn }) {
+export default function SignupPage({ isLoggedIn, setIsLoggedIn }) {
   const [showPassword, setShowPassword] = useState(false);
   const [inputs, setInputs] = useState({
     name: "",
@@ -26,14 +27,34 @@ export default function SignupPage({ isloggedIn, setIsLoggedIn }) {
     password: "",
   });
 
+  const toast = useToast();
+
   const handleSignup = async () => {
+    console.log("these are your inputs", inputs);
     try {
-      console.log(inputs);
+      const res = await fetch("http://localhost:5000/api/users/signup", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(inputs),
+      });
+      const data = await res.json();
+      console.log("this is your data", data);
+      if (data.error) {
+        toast({
+          title: "Error",
+          description: data.error,
+          status: "error",
+          duration: 3000,
+          isClosable: true,
+        });
+        return;
+      }
+      // Your signup logic here
     } catch (error) {
-      console.log(error.message);
+      console.log("error signing up", error.message);
     }
   };
-  console.log(inputs);
+
   return (
     <Flex minH={"500px"} align={"center"} justify={"center"}>
       <Stack spacing={6}>
@@ -76,7 +97,7 @@ export default function SignupPage({ isloggedIn, setIsLoggedIn }) {
               </Box>
             </HStack>
             <FormControl isRequired>
-              <FormLabel>Email </FormLabel>
+              <FormLabel>Email</FormLabel>
               <Input
                 type="email"
                 onChange={(e) =>
@@ -88,17 +109,19 @@ export default function SignupPage({ isloggedIn, setIsLoggedIn }) {
             <FormControl isRequired>
               <FormLabel>Password</FormLabel>
               <InputGroup>
-                <Input type={showPassword ? "text" : "password"} />
+                <Input
+                  type={showPassword ? "text" : "password"}
+                  onChange={(e) =>
+                    setInputs({ ...inputs, password: e.target.value })
+                  }
+                  value={inputs.password}
+                />
                 <InputRightElement h={"full"}>
                   <Button
                     variant={"ghost"}
                     onClick={() =>
                       setShowPassword((showPassword) => !showPassword)
                     }
-                    onChange={(e) =>
-                      setInputs({ ...inputs, name: e.target.value })
-                    }
-                    value={inputs.password}
                   >
                     {showPassword ? <ViewIcon /> : <ViewOffIcon />}
                   </Button>
@@ -123,7 +146,7 @@ export default function SignupPage({ isloggedIn, setIsLoggedIn }) {
                 <Link
                   color={"blue.400"}
                   onClick={() => {
-                    setIsLoggedIn(!isloggedIn);
+                    setIsLoggedIn(!isLoggedIn);
                   }}
                 >
                   Login

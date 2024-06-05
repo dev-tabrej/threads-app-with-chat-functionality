@@ -8,7 +8,7 @@ const signupUser = async (req, res) => {
 
     const user = await User.findOne({ $or: [{ username }, { email }] });
     if (user) {
-      return res.status(400).json({ message: "user already exists" });
+      return res.status(400).json({ error: "user already exists" });
     }
     const salt = await bcrypt.genSalt(10);
     console.log(salt);
@@ -34,10 +34,10 @@ const signupUser = async (req, res) => {
         username: newUser.username,
       });
     } else {
-      res.status(400).json({ message: "user not created" });
+      res.status(400).json({ error: "user not created" });
     }
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    res.status(500).json({ error: error.message });
     console.log("occured error: " + error.message);
   }
 };
@@ -57,12 +57,12 @@ const loginUser = async (req, res) => {
           username: user.username,
         });
       } else {
-        res.status(400).json({ message: "invalid credentials" });
+        res.status(400).json({ error: "invalid credentials" });
       }
     }
   } catch (error) {
-    res.status(500).json({ message: error.message });
-    console.log("occured error: " + error.message);
+    res.status(500).json({ error: error.message });
+    console.log("occured error:" + error.message);
   }
 };
 
@@ -71,7 +71,7 @@ const logoutUser = async (req, res) => {
     res.cookie("jwt", "", { maxAge: 1 });
     res.status(200).json({ message: "user logged out" });
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    res.status(500).json({ error: error.message });
     console.log("occured error: " + error.message);
   }
 };
@@ -82,10 +82,10 @@ const followUnfollow = async (req, res) => {
     const userToModify = await User.findById(id);
     const currentUser = await User.findById(req.user._id);
     if (id === req.user._id.toString()) {
-      return res.status(400).json({ message: "Cannot follow self" });
+      return res.status(400).json({ error: "Cannot follow self" });
     }
     if (!userToModify || !currentUser) {
-      return res.status(404).json({ message: "User not found" });
+      return res.status(404).json({ error: "User not found" });
     }
     const isFollowing = currentUser.following.includes(id);
 
@@ -99,7 +99,7 @@ const followUnfollow = async (req, res) => {
       res.status(200).json({ message: "User followed succesfully" });
     }
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    res.status(500).json({ error: error.message });
     console.log("occured error: " + error.message);
   }
 };
@@ -110,10 +110,10 @@ const updateUser = async (req, res) => {
   try {
     let user = await User.findById(userId);
     if (!user) {
-      return res.status(404).json({ message: "User not found" });
+      return res.status(404).json({ error: "User not found" });
     }
     if (userId.toString() !== req.params.id) {
-      return res.status(500).json({ message: "cannot update others profile" });
+      return res.status(500).json({ error: "cannot update others profile" });
     }
     if (password) {
       const salt = await bcrypt.genSalt(10);
@@ -129,7 +129,7 @@ const updateUser = async (req, res) => {
 
     user = await user.save();
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    res.status(500).json({ error: error.message });
     console.log("occured error: " + error.message);
   }
 };
@@ -141,11 +141,11 @@ const getProfile = async (req, res) => {
       .select("-password")
       .select("-email");
     if (!user) {
-      return res.status(404).json({ message: "User not found" });
+      return res.status(404).json({ error: "User not found" });
     }
     res.status(200).json(user);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    res.status(500).json({ error: error.message });
     console.log("occured error: " + error.message);
   }
 };
