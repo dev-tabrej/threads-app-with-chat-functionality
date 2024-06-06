@@ -4,13 +4,14 @@ import SignupPage from "../components/SignupPage";
 
 import { useState } from "react";
 function AuthPage() {
-  const [isloggedIn, setIsLoggedIn] = useState(true);
+  const [haveAccount, setHaveAccount] = useState(true);
+
   return (
     <>
-      {isloggedIn ? (
-        <Login isloggedIn={isloggedIn} setIsLoggedIn={setIsLoggedIn} />
+      {haveAccount ? (
+        <Login haveAccount={haveAccount} setHaveAccount={setHaveAccount} />
       ) : (
-        <SignupPage isloggedIn={isloggedIn} setIsLoggedIn={setIsLoggedIn} />
+        <SignupPage haveAccount={haveAccount} setHaveAccount={setHaveAccount} />
       )}
     </>
   );

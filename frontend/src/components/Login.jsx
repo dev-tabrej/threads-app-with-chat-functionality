@@ -12,8 +12,33 @@ import {
   Image,
   useColorModeValue,
 } from "@chakra-ui/react";
-
-export default function Login({ isloggedIn, setIsLoggedIn }) {
+import { useState } from "react";
+import useShowToast from "../hooks/useToast";
+import userAtom from "../atoms/userAtom";
+import { useSetRecoilState } from "recoil";
+export default function Login({ haveAccount, setHaveAccount }) {
+  const [inputs, setInputs] = useState({ username: "", password: "" });
+  const showToast = useShowToast();
+  const setUser = useSetRecoilState(userAtom);
+  const handelLogin = async () => {
+    console.log(inputs);
+    try {
+      const res = await fetch("http://localhost:5000/api/users/loginUser", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(inputs),
+      });
+      const data = await res.json();
+      console.log(data);
+      if (data.error) {
+        showToast("Error", data.error, "error");
+      }
+      localStorage.setItem("user-threads", JSON.stringify(data));
+      setUser(data);
+    } catch (error) {
+      showToast("Error", error, "error");
+    }
+  };
   return (
     <Stack minH={"500px"} direction={{ base: "column", md: "row" }}>
       <Flex
@@ -29,11 +54,29 @@ export default function Login({ isloggedIn, setIsLoggedIn }) {
           <Heading fontSize={"2xl"}>Sign in to your account</Heading>
           <FormControl id="email">
             <FormLabel>Email address</FormLabel>
-            <Input type="email" />
+            <Input
+              type="email"
+              onChange={(e) => {
+                setInputs((inputs) => ({
+                  ...inputs,
+                  username: e.target.value,
+                }));
+              }}
+              value={inputs.username}
+            />
           </FormControl>
           <FormControl id="password">
             <FormLabel>Password</FormLabel>
-            <Input type="password" />
+            <Input
+              type="password"
+              onChange={(e) => {
+                setInputs((inputs) => ({
+                  ...inputs,
+                  password: e.target.value,
+                }));
+              }}
+              value={inputs.password}
+            />
           </FormControl>
           <Stack spacing={6}>
             <Stack
@@ -48,6 +91,7 @@ export default function Login({ isloggedIn, setIsLoggedIn }) {
               colorScheme={"blue"}
               variant={"solid"}
               color={useColorModeValue("white", "gray.800")}
+              onClick={handelLogin}
             >
               Sign in
             </Button>
@@ -58,7 +102,7 @@ export default function Login({ isloggedIn, setIsLoggedIn }) {
               <Link
                 color={"blue.400"}
                 onClick={() => {
-                  setIsLoggedIn(!isloggedIn);
+                  setHaveAccount(!haveAccount);
                 }}
               >
                 SignUp

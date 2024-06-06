@@ -2,13 +2,12 @@ import Post from "./../models/postModel.js";
 import User from "../models/userModel.js";
 
 const createPost = async (req, res) => {
-  const { postedBy, postTitle } = req.body;
+  const postedBy = await req.user._id;
+  const { postTitle } = req.body;
 
   try {
     if (!postedBy || !postTitle) {
-      return res
-        .status(400)
-        .json({ message: "PostedBy and postTitle are required" });
+      return res.status(400).json({ message: "postTitle is required" });
     }
     const user = await User.findById(postedBy);
     if (!user) {

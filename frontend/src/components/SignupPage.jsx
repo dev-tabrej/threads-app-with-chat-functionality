@@ -17,8 +17,11 @@ import {
 } from "@chakra-ui/react";
 import { useState } from "react";
 import { ViewIcon, ViewOffIcon } from "@chakra-ui/icons";
+import useShowToast from "../hooks/useToast";
+import { useSetRecoilState } from "recoil";
+import userAtom from "../atoms/userAtom";
 
-export default function SignupPage({ isLoggedIn, setIsLoggedIn }) {
+export default function SignupPage({ haveAccount, setHaveAccount }) {
   const [showPassword, setShowPassword] = useState(false);
   const [inputs, setInputs] = useState({
     name: "",
@@ -27,8 +30,8 @@ export default function SignupPage({ isLoggedIn, setIsLoggedIn }) {
     password: "",
   });
 
-  const toast = useToast();
-
+  const showToast = useShowToast();
+  const setUser = useSetRecoilState(userAtom);
   const handleSignup = async () => {
     console.log("these are your inputs", inputs);
     try {
@@ -40,18 +43,15 @@ export default function SignupPage({ isLoggedIn, setIsLoggedIn }) {
       const data = await res.json();
       console.log("this is your data", data);
       if (data.error) {
-        toast({
-          title: "Error",
-          description: data.error,
-          status: "error",
-          duration: 3000,
-          isClosable: true,
-        });
+        showToast("Error", data.error, "error");
+
         return;
       }
+      localStorage.setItem("user-threads", JSON.stringify(data));
+      setUser(data);
       // Your signup logic here
     } catch (error) {
-      console.log("error signing up", error.message);
+      showToast("Error", error, "error");
     }
   };
 
@@ -146,7 +146,7 @@ export default function SignupPage({ isLoggedIn, setIsLoggedIn }) {
                 <Link
                   color={"blue.400"}
                   onClick={() => {
-                    setIsLoggedIn(!isLoggedIn);
+                    setHaveAccount(!haveAccount);
                   }}
                 >
                   Login
