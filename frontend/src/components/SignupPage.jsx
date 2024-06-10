@@ -39,6 +39,7 @@ export default function SignupPage({ haveAccount, setHaveAccount }) {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(inputs),
+        credentials: "include",
       });
       const data = await res.json();
       console.log("this is your data", data);

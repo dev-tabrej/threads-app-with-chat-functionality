@@ -21,17 +21,18 @@ export default function Login({ haveAccount, setHaveAccount }) {
   const showToast = useShowToast();
   const setUser = useSetRecoilState(userAtom);
   const handelLogin = async () => {
-    console.log(inputs);
     try {
       const res = await fetch("http://localhost:5000/api/users/loginUser", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(inputs),
+        credentials: "include",
       });
       const data = await res.json();
       console.log(data);
       if (data.error) {
         showToast("Error", data.error, "error");
+        return;
       }
       localStorage.setItem("user-threads", JSON.stringify(data));
       setUser(data);

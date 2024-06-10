@@ -1,5 +1,6 @@
 import express from "express";
 import protectRoute from "./../middlewares/protectRoute.js";
+
 import {
   loginUser,
   signupUser,
@@ -14,7 +15,7 @@ router.post("/signup", signupUser);
 router.post("/loginUser", loginUser);
 router.post("/logoutUser", logoutUser);
 router.post("/follow/:id", protectRoute, followUnfollow);
-router.post("/update/:id", protectRoute, updateUser);
+router.put("/update/:id", protectRoute, updateUser);
 router.get("/profile/:username", getProfile);
 // router.post("/loginUser", loginUser);
 
