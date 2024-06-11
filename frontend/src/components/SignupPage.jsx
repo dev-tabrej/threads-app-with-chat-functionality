@@ -23,6 +23,7 @@ import userAtom from "../atoms/userAtom";
 
 export default function SignupPage({ haveAccount, setHaveAccount }) {
   const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [inputs, setInputs] = useState({
     name: "",
     username: "",
@@ -34,6 +35,7 @@ export default function SignupPage({ haveAccount, setHaveAccount }) {
   const setUser = useSetRecoilState(userAtom);
   const handleSignup = async () => {
     console.log("these are your inputs", inputs);
+    setLoading(true);
     try {
       const res = await fetch("http://localhost:5000/api/users/signup", {
         method: "POST",
@@ -53,6 +55,8 @@ export default function SignupPage({ haveAccount, setHaveAccount }) {
       // Your signup logic here
     } catch (error) {
       showToast("Error", error, "error");
+    } finally {
+      setLoading(false);
     }
   };
 

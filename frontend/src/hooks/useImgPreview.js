@@ -1,26 +1,29 @@
 import { useState } from "react";
-import useShowToast from "./useToast";
+import useShowToast from "./useToast.js"; // Make sure the import path is correct
 
 function useImgPreview() {
-  const [imgUrl, setImgUrl] = useState(null);
-  const showToast = useShowToast();
+  const [imgUrl, setImgUrl] = useState(null); // State to store the image URL
+  const showToast = useShowToast(); // Custom hook to show toast notifications
+
+  // Function to handle image file selection
   const handleImgChange = (e) => {
-    // console.log("this is your files object", e.target.files);
-    const file = e.target.files[0];
+    const file = e.target.files[0]; // Get the first selected file
+
     if (file && file.type.startsWith("image/")) {
-      const reader = new FileReader();
+      // Check if the file is an image
+      const reader = new FileReader(); // Create a new FileReader instance
       reader.onloadend = () => {
-        setImgUrl(reader.result);
+        setImgUrl(reader.result); // Set the image URL state to the file's data URL
       };
-      reader.readAsDataURL(file);
+      reader.readAsDataURL(file); // Read the file as a data URL
     } else {
-      showToast("Invalid file", "please select a user file", "error");
-      setImgUrl(null);
+      // Show a toast notification if the selected file is not an image
+      showToast("Invalid file", "Please select an image file", "error");
+      setImgUrl(null); // Reset the image URL state
     }
-    console.log(file);
   };
-  console.log(imgUrl);
-  return { handleImgChange, imgUrl };
+
+  return { handleImgChange, imgUrl, setImgUrl }; // Return the handler and state
 }
 
 export default useImgPreview;

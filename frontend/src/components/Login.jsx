@@ -11,6 +11,7 @@ import {
   Stack,
   Image,
   useColorModeValue,
+  Spinner,
 } from "@chakra-ui/react";
 import { useState } from "react";
 import useShowToast from "../hooks/useToast";
@@ -20,8 +21,15 @@ export default function Login({ haveAccount, setHaveAccount }) {
   const [inputs, setInputs] = useState({ username: "", password: "" });
   const showToast = useShowToast();
   const setUser = useSetRecoilState(userAtom);
+  const [loading, setLoading] = useState(false);
   const handelLogin = async () => {
+    setLoading(true);
+
     try {
+      if (!inputs.username || !inputs.password) {
+        showToast("Error", "Enter a valid username and Password", "error");
+        return;
+      }
       const res = await fetch("http://localhost:5000/api/users/loginUser", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -38,6 +46,8 @@ export default function Login({ haveAccount, setHaveAccount }) {
       setUser(data);
     } catch (error) {
       showToast("Error", error, "error");
+    } finally {
+      setLoading(false);
     }
   };
   return (
@@ -90,9 +100,11 @@ export default function Login({ haveAccount, setHaveAccount }) {
             </Stack>
             <Button
               colorScheme={"blue"}
+              loadingText="Logging in."
               variant={"solid"}
               color={useColorModeValue("white", "gray.800")}
               onClick={handelLogin}
+              isLoading={loading}
             >
               Sign in
             </Button>

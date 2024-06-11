@@ -11,13 +11,13 @@ import {
   Avatar,
 } from "@chakra-ui/react";
 import { useRef, useState } from "react";
-import { useRecoilState } from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
 import userAtom from "../atoms/userAtom";
 import useImgPreview from "../hooks/useImgPreview";
 import useShowToast from "../hooks/useToast";
 
 export default function UpdateUser() {
-  const [user] = useRecoilState(userAtom);
+  const user = useRecoilValue(userAtom);
   const [inputs, setInputs] = useState({
     username: user.username,
     email: user.email,
@@ -25,7 +25,7 @@ export default function UpdateUser() {
     profilePic: user.profilePic,
     password: "",
   });
-  console.log("recently logged user", user);
+  // console.log("recently logged user", user);
   console.log(user._id);
   const fileRef = useRef(null);
   const showToast = useShowToast();
@@ -53,6 +53,7 @@ export default function UpdateUser() {
 
       if (!res.ok) {
         throw new Error(data.message || "Error updating user");
+        return;
       }
       console.log(data);
       showToast("Success", "Profile updated successfully", "success");

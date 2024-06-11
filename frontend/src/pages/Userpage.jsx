@@ -5,9 +5,11 @@ import Header from "../components/Header";
 import { useParams } from "react-router-dom";
 import Userpost from "../components/Userpost";
 import useShowToast from "../hooks/useToast";
+import { Flex, Spinner, Text } from "@chakra-ui/react";
 function Userpage() {
   const [user, setUser] = useState(null);
   const { username } = useParams();
+  const [loading, setLoading] = useState(true);
   const ShowToast = useShowToast();
   useEffect(() => {
     const getUser = async () => {
@@ -25,12 +27,25 @@ function Userpage() {
         setUser(data);
       } catch (error) {
         ShowToast("Error", error, "error");
+      } finally {
+        setLoading(false);
       }
     };
     getUser();
   }, [username]);
+  if (!user && loading) {
+    return (
+      <Flex justifyContent={"center"}>
+        <Spinner size={"xl"}></Spinner>;
+      </Flex>
+    );
+  }
   if (!user) {
-    return null;
+    return (
+      <Text fontSize={"xl"} textAlign={"center"} fontStyle={"bolder"}>
+        User not found
+      </Text>
+    );
   }
   return (
     <>

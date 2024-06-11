@@ -17,10 +17,11 @@ import { useRecoilValue } from "recoil";
 import userAtom from "./atoms/userAtom";
 import LogoutButton from "./components/LogoutButton";
 import UpdateUser from "./components/UpdateUser";
+import CreatePost from "./components/CreatePost";
 
 function App() {
   const user = useRecoilValue(userAtom);
-  console.log(user);
+  // console.log(user);
   return (
     <Container maxW="620px">
       <Header />
@@ -50,6 +51,7 @@ function App() {
         />
       </Routes>
       {user && <LogoutButton />}
+      {user && <CreatePost />}
     </Container>
   );
 }
