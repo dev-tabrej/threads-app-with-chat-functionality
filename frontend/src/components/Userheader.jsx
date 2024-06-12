@@ -8,6 +8,7 @@ import { Portal } from "@chakra-ui/portal";
 import userAtom from "../atoms/userAtom";
 import { useRecoilState } from "recoil";
 import useShowToast from "../hooks/useToast.js"; // Import the custom hook
+import { useNavigate } from "react-router-dom"; // Import useNavigate
 
 function Userheader({ user }) {
   const [loading, setLoading] = useState(false);
@@ -17,6 +18,7 @@ function Userheader({ user }) {
   );
 
   const showToast = useShowToast(); // Use the custom hook
+  const navigate = useNavigate(); // Initialize useNavigate
 
   // Function to copy the current URL to clipboard
   const copyUrl = () => {
@@ -68,6 +70,11 @@ function Userheader({ user }) {
     }
   };
 
+  // Function to handle update user button click
+  const handleUpdateUser = () => {
+    navigate("/updateUser");
+  };
+
   return (
     <VStack spacing={200} gap={4} alignItems={"start"}>
       <Flex justifyContent={"space-between"} w={"full"}>
@@ -93,9 +100,13 @@ function Userheader({ user }) {
         </Box>
       </Flex>
       <Text>{user.bio}</Text>
-      {user._id !== currentUser._id && (
+      {user._id !== currentUser._id ? (
         <Button size={"sm"} onClick={handleFollowUnfollow} isLoading={loading}>
           {following ? "Unfollow" : "Follow"}
+        </Button>
+      ) : (
+        <Button size={"sm"} onClick={handleUpdateUser} isLoading={loading}>
+          Update User
         </Button>
       )}
       <Flex justifyContent={"space-between"} width={"full"}>

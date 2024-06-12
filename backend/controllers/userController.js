@@ -2,6 +2,8 @@ import User from "../models/userModel.js";
 import bcrypt from "bcryptjs";
 import { v2 as cloudinary } from "cloudinary";
 import generateTokenAndSetCookie from "./utils/helper/generateTokenAndSetCookie.js";
+import mongoose from "mongoose";
+
 const signupUser = async (req, res) => {
   try {
     const { name, email, password, username } = req.body;
@@ -106,7 +108,7 @@ const updateUser = async (req, res) => {
   const { name, username, password, email, bio } = req.body;
   const userId = req.user ? req.user._id : null;
   let profilePic = req.body.profilePic;
-  console.log(userId);
+
   try {
     let user = await User.findById(userId);
     if (!user) {
@@ -123,20 +125,24 @@ const updateUser = async (req, res) => {
       user.password = hashedPassword;
     }
 
-    // if (profilePic) {
-    //   if (user.profilePic) {
-    //     await cloudinary.uploader.destroy(
-    //       user.profilePic.split("/").pop().split(".")[0]
-    //     );
-    //   }
-    //   const uploadedResponse = await cloudinary.uploader.upload(profilePic);
-    //   profilePic = uploadedResponse.secure_url;
-    // }
+    if (profilePic && profilePic !== user.profilePic) {
+      if (user.profilePic) {
+        await cloudinary.uploader.destroy(
+          user.profilePic.split("/").pop().split(".")[0]
+        );
+      }
+      const uploadedResponse = await cloudinary.uploader.upload(profilePic);
+      profilePic = uploadedResponse.secure_url;
+    } else {
+      // If no new profile picture is provided, retain the existing one
+      profilePic = user.profilePic;
+    }
 
+    // Update user fields with provided data or retain existing values if not provided
     user.username = username || user.username;
     user.name = name || user.name;
     user.email = email || user.email;
-    user.profilePic = profilePic || user.profilePic;
+    user.profilePic = profilePic; // Update profilePic with the new or existing value
     user.bio = bio || user.bio;
 
     await user.save(); // Save the user before sending the response
@@ -148,18 +154,25 @@ const updateUser = async (req, res) => {
 };
 
 const getProfile = async (req, res) => {
-  const { username } = req.params;
+  const { query } = req.params;
+  // console.log("Received query:", query); // Debug log
+
   try {
-    const user = await User.findOne({ username })
-      .select("-password")
-      .select("-email");
+    let user;
+
+    // Check if query is a valid ObjectId
+    if (mongoose.Types.ObjectId.isValid(query)) {
+      user = await User.findOne({ _id: query }).select("-password -email");
+    } else {
+      user = await User.findOne({ username: query }).select("-password -email");
+    }
     if (!user) {
       return res.status(404).json({ error: "User not found" });
     }
     res.status(200).json(user);
   } catch (error) {
+    console.log("Occurred error:", error.message); // Debug log
     res.status(500).json({ error: error.message });
-    console.log("occured error: " + error.message);
   }
 };
 export {

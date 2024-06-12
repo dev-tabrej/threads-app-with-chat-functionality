@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
-import { Button, Flex } from "@chakra-ui/react";
+import { Flex, Spinner } from "@chakra-ui/react";
 import useShowToast from "../hooks/useToast";
+import Post from "./Post.jsx";
 
 function Homepage() {
   const showToast = useShowToast();
   const [posts, setPosts] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const getFeedPost = async () => {
@@ -19,13 +19,13 @@ function Homepage() {
           throw new Error("No user-threads token found in localStorage");
         }
 
-        // Send the token in the request
+        // Send the token in the request and include credentials
         const res = await fetch("http://localhost:5000/api/posts/feed", {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`, // Include token in Authorization header
           },
+          credentials: "include", // Include credentials to send cookies
         });
         const data = await res.json();
         console.log(data);
@@ -45,11 +45,22 @@ function Homepage() {
   }, []);
 
   return (
-    <Link to={"/markzukerberg"}>
-      <Flex w={"full"} justifyContent={"center"}>
-        <Button>Hello</Button>
-      </Flex>
-    </Link>
+    <>
+      {loading && (
+        <Flex justifyContent={"center"}>
+          <Spinner size={"xl"}></Spinner>
+        </Flex>
+      )}
+      {!loading && posts.length === 0 && (
+        <Flex justifyContent={"center"}>
+          <h1 size={"xl"}> Follow some users to see feed posts</h1>
+        </Flex>
+      )}
+
+      {posts.map((post) => (
+        <Post key={post._id} post={post} postedBy={post.postedBy} />
+      ))}
+    </>
   );
 }
 

@@ -11,13 +11,13 @@ import {
   Avatar,
 } from "@chakra-ui/react";
 import { useRef, useState } from "react";
-import { useRecoilState, useRecoilValue } from "recoil";
+import { useRecoilState } from "recoil";
 import userAtom from "../atoms/userAtom";
 import useImgPreview from "../hooks/useImgPreview";
 import useShowToast from "../hooks/useToast";
 
 export default function UpdateUser() {
-  const user = useRecoilValue(userAtom);
+  const [user, setUser] = useRecoilState(userAtom);
   const [inputs, setInputs] = useState({
     username: user.username,
     email: user.email,
@@ -25,8 +25,7 @@ export default function UpdateUser() {
     profilePic: user.profilePic,
     password: "",
   });
-  // console.log("recently logged user", user);
-  console.log(user._id);
+
   const fileRef = useRef(null);
   const showToast = useShowToast();
   const { handleImgChange, imgUrl } = useImgPreview();
@@ -36,7 +35,11 @@ export default function UpdateUser() {
 
     try {
       const token = localStorage.getItem("user-threads");
-      console.log("Token from localStorage:", token); // Debug statement
+
+      const updatedData = {
+        ...inputs,
+        profilePic: imgUrl || inputs.profilePic, // Ensure profilePic is handled correctly
+      };
 
       const res = await fetch(
         `http://localhost:5000/api/users/update/${user._id}`,
@@ -46,16 +49,19 @@ export default function UpdateUser() {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`, // Ensure the token is added in this format
           },
-          body: JSON.stringify({ ...inputs, profilePic: imgUrl }),
+          credentials: "include",
+          body: JSON.stringify(updatedData),
         }
       );
       const data = await res.json();
 
       if (!res.ok) {
         throw new Error(data.message || "Error updating user");
-        return;
       }
-      console.log(data);
+
+      // Update the local state with the new user data
+      setUser(data.user);
+
       showToast("Success", "Profile updated successfully", "success");
     } catch (error) {
       console.error("Update Error:", error);
@@ -144,6 +150,7 @@ export default function UpdateUser() {
               }
               _placeholder={{ color: "gray.500" }}
               type="password"
+              autoComplete="current-password" // Add autocomplete attribute to suppress warning
             />
           </FormControl>
           <Stack spacing={6} direction={["column", "row"]}>

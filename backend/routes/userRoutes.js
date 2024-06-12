@@ -16,7 +16,7 @@ router.post("/loginUser", loginUser);
 router.post("/logoutUser", logoutUser);
 router.post("/follow/:id", protectRoute, followUnfollow);
 router.put("/update/:id", protectRoute, updateUser);
-router.get("/profile/:username", getProfile);
+router.get("/profile/:query", getProfile);
 // router.post("/loginUser", loginUser);
 
 export default router;

@@ -15,7 +15,11 @@ function Userpage() {
     const getUser = async () => {
       try {
         const res = await fetch(
-          `http://localhost:5000/api/users/profile/${username}`
+          `http://localhost:5000/api/users/profile/${username}`,
+          {
+            headers: { "Content-Type": "application/json" },
+            credentials: "include",
+          }
         );
         const data = await res.json();
         // setUser(data);
