@@ -100,7 +100,7 @@ function Userheader({ user }) {
         </Box>
       </Flex>
       <Text>{user.bio}</Text>
-      {user._id !== currentUser._id ? (
+      {user._id !== currentUser?._id ? (
         <Button size={"sm"} onClick={handleFollowUnfollow} isLoading={loading}>
           {following ? "Unfollow" : "Follow"}
         </Button>

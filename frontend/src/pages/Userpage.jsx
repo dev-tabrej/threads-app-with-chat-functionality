@@ -6,6 +6,7 @@ import { useParams } from "react-router-dom";
 // import Userpost from "../components/Userpost";
 import useShowToast from "../hooks/useToast";
 import { Flex, Spinner, Text } from "@chakra-ui/react";
+import Post from "../components/Post";
 function Userpage() {
   const [user, setUser] = useState(null);
   const { username } = useParams();
@@ -83,6 +84,19 @@ function Userpage() {
     <>
       {/* <Header /> */}
       <Userheader user={user} />
+      {!fetchingPosts && posts.length === 0 && (
+        <Text fontSize={"xl"} textAlign={"center"} mt={12}>
+          User have no posts
+        </Text>
+      )}
+      {fetchingPosts && (
+        <Flex justifyContent={"center"} mt={12}>
+          <Spinner size={"xl"} />
+        </Flex>
+      )}
+      {posts.map((post) => (
+        <Post key={post._id} post={post} postedBy={post.postedBy} />
+      ))}
     </>
   );
 }

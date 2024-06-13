@@ -14,6 +14,7 @@ function Actions({ post }) {
   const [isReplying, setIsReplying] = useState(false);
   const handleLikeUnlike = async () => {
     if (!user) showToast("Error", "User not valid to like", "error");
+    return;
     if (isLiking) return;
     setIsLiking(true);
     try {
