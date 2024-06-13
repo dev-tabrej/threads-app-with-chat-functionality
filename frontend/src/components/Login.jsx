@@ -9,20 +9,25 @@ import {
   Input,
   Link,
   Stack,
-  Image,
   useColorModeValue,
   Spinner,
+  InputGroup,
+  InputRightElement,
 } from "@chakra-ui/react";
 import { useState } from "react";
 import useShowToast from "../hooks/useToast";
 import userAtom from "../atoms/userAtom";
 import { useSetRecoilState } from "recoil";
+import { ViewIcon, ViewOffIcon } from "@chakra-ui/icons";
+
 export default function Login({ haveAccount, setHaveAccount }) {
   const [inputs, setInputs] = useState({ username: "", password: "" });
+  const [showPassword, setShowPassword] = useState(false);
   const showToast = useShowToast();
   const setUser = useSetRecoilState(userAtom);
   const [loading, setLoading] = useState(false);
-  const handelLogin = async () => {
+
+  const handleLogin = async () => {
     setLoading(true);
 
     try {
@@ -50,6 +55,7 @@ export default function Login({ haveAccount, setHaveAccount }) {
       setLoading(false);
     }
   };
+
   return (
     <Stack minH={"500px"} direction={{ base: "column", md: "row" }}>
       <Flex
@@ -78,16 +84,27 @@ export default function Login({ haveAccount, setHaveAccount }) {
           </FormControl>
           <FormControl id="password">
             <FormLabel>Password</FormLabel>
-            <Input
-              type="password"
-              onChange={(e) => {
-                setInputs((inputs) => ({
-                  ...inputs,
-                  password: e.target.value,
-                }));
-              }}
-              value={inputs.password}
-            />
+            <InputGroup>
+              <Input
+                type={showPassword ? "text" : "password"}
+                onChange={(e) => {
+                  setInputs((inputs) => ({
+                    ...inputs,
+                    password: e.target.value,
+                  }));
+                }}
+                value={inputs.password}
+              />
+              <InputRightElement width="4.5rem">
+                <Button
+                  h="1.75rem"
+                  size="sm"
+                  onClick={() => setShowPassword(!showPassword)}
+                >
+                  {showPassword ? <ViewIcon /> : <ViewOffIcon />}
+                </Button>
+              </InputRightElement>
+            </InputGroup>
           </FormControl>
           <Stack spacing={6}>
             <Stack
@@ -103,7 +120,7 @@ export default function Login({ haveAccount, setHaveAccount }) {
               loadingText="Logging in."
               variant={"solid"}
               color={useColorModeValue("white", "gray.800")}
-              onClick={handelLogin}
+              onClick={handleLogin}
               isLoading={loading}
             >
               Sign in
