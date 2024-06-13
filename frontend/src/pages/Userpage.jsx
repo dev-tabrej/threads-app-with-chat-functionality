@@ -3,14 +3,17 @@ import Userheader from "../components/Userheader";
 import Postpage from "../components/Userpost";
 import Header from "../components/Header";
 import { useParams } from "react-router-dom";
-import Userpost from "../components/Userpost";
+// import Userpost from "../components/Userpost";
 import useShowToast from "../hooks/useToast";
 import { Flex, Spinner, Text } from "@chakra-ui/react";
 function Userpage() {
   const [user, setUser] = useState(null);
   const { username } = useParams();
   const [loading, setLoading] = useState(true);
+  const [posts, setPosts] = useState([]);
+  const [fetchingPosts, setFetchingPosts] = useState(false);
   const ShowToast = useShowToast();
+
   useEffect(() => {
     const getUser = async () => {
       try {
@@ -35,7 +38,32 @@ function Userpage() {
         setLoading(false);
       }
     };
+    const getPosts = async () => {
+      setFetchingPosts(true);
+      try {
+        const res = await fetch(
+          `http://localhost:5000/api/posts/user/${username}`,
+          {
+            method: "GET",
+            headers: { "Content-type": "application/json" },
+            credentials: "include",
+          }
+        );
+        const data = await res.json();
+        console.log(data);
+        if (data.error) {
+          ShowToast("Eror", data.error, "error");
+        }
+        setPosts(data);
+      } catch (error) {
+        ShowToast("Error", error.message, "error");
+        setPosts([]);
+      } finally {
+        setFetchingPosts(false);
+      }
+    };
     getUser();
+    getPosts();
   }, [username]);
   if (!user && loading) {
     return (
@@ -55,26 +83,6 @@ function Userpage() {
     <>
       {/* <Header /> */}
       <Userheader user={user} />
-      <Userpost
-        likes={1200}
-        replies={107}
-        userImage={`/zuck-avatar.png`}
-        postImage={"/post1.png"}
-        postTitle={"This is my first post"}
-      />
-      <Userpost
-        likes={12390}
-        replies={512}
-        postImage={"/post3.png"}
-        postTitle={"hey i m posting this"}
-      />
-      <Userpost
-        likes={653}
-        replies={822}
-        postImage={"/post-2.png"}
-        postTitle={"last post"}
-      />
-      <Userpost likes={1200} replies={3102} postTitle={"Toast is ready"} />
     </>
   );
 }

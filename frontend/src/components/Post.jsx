@@ -59,33 +59,40 @@ function Post({ post, postedBy }) {
           />
           <Box w={"1px"} h={"full"} my={2} bg={"gray.light"}></Box>
           <Box position={"relative"} width={"full"}>
-            <Avatar
-              src="/light.svg"
-              size={"xs"}
-              position={"absolute"}
-              top={"0px"}
-              left={"15px"}
-              border={"1px"}
-              padding={"2px"}
-            />
-            <Avatar
-              src="/Dark.svg"
-              size={"xs"}
-              position={"absolute"}
-              bottom={"0px"}
-              right={"-5px"}
-              border={"1px"}
-              padding={"2px"}
-            />
-            <Avatar
-              src="/vite.svg"
-              size={"xs"}
-              position={"absolute"}
-              bottom={"0px"}
-              left={"4px"}
-              border={"1px"}
-              padding={"2px"}
-            />
+            {post.replies.length === 0 && <Text textAlign={"center"}>😒</Text>}
+            {post.replies[0] && (
+              <Avatar
+                src={post.replies[0].userProfilePic}
+                size={"xs"}
+                position={"absolute"}
+                top={"0px"}
+                left={"15px"}
+                border={"1px"}
+                padding={"2px"}
+              />
+            )}
+            {post.replies[1] && (
+              <Avatar
+                src={post.replies[1].userProfilePic}
+                size={"xs"}
+                position={"absolute"}
+                bottom={"0px"}
+                right={"-5px"}
+                border={"1px"}
+                padding={"2px"}
+              />
+            )}
+            {post.replies[2] && (
+              <Avatar
+                src={post.replies[2].userProfilePic}
+                size={"xs"}
+                position={"absolute"}
+                bottom={"0px"}
+                left={"4px"}
+                border={"1px"}
+                padding={"2px"}
+              />
+            )}
           </Box>
         </Flex>
         <Flex flexDirection={"column"} w={"full"}>
@@ -117,12 +124,7 @@ function Post({ post, postedBy }) {
           <Text fontSize={"small"}>{post.postTitle}</Text>
           {post.img && <Image src={post.img} alt={"post"} />}
           <Flex gap={2} mt={2} color={"gray"}>
-            <Actions liked={liked} setLiked={setLiked} />
-          </Flex>
-          <Flex gap={2} alignItems={"center"} color={"gray"} fontSize={"sm"}>
-            <Text fontStyle={"sm"}>{`${post.replies.length} Replies`}</Text>
-            <Box height={1} w={1} borderRadius={"50%"} bg={"gray"}></Box>
-            <Text fontStyle={"sm"}>{`${post.likes.length} Likes`}</Text>
+            <Actions post={post} />
           </Flex>
         </Flex>
       </Flex>

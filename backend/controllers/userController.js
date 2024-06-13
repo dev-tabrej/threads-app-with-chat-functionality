@@ -68,11 +68,12 @@ const loginUser = async (req, res) => {
 
 const logoutUser = async (req, res) => {
   try {
-    res.cookie("jwt", "", { maxAge: 1 });
-    res.status(200).json({ message: "user logged out" });
+    // Clear the cookie by setting it to an empty string and maxAge to 1 millisecond
+    res.cookie("jwt", "", { maxAge: 1, httpOnly: true });
+    res.status(200).json({ message: "User logged out successfully" });
   } catch (error) {
+    console.error("An error occurred: " + error.message);
     res.status(500).json({ error: error.message });
-    console.log("occured error: " + error.message);
   }
 };
 
