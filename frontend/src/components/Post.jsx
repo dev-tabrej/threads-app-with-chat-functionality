@@ -5,9 +5,13 @@ import { BsThreeDots } from "react-icons/bs";
 import Actions from "./Actions";
 import useShowToast from "../hooks/useToast";
 import { formatDistanceToNow } from "date-fns";
+import { DeleteIcon } from "@chakra-ui/icons";
+import { useRecoilValue } from "recoil";
+import userAtom from "../atoms/userAtom";
 function Post({ post, postedBy }) {
   const [liked, setLiked] = useState(false);
   const [user, setUser] = useState(null);
+  const currentUser = useRecoilValue(userAtom);
   const showToast = useShowToast();
   const navigate = useNavigate();
   useEffect(() => {
@@ -35,6 +39,29 @@ function Post({ post, postedBy }) {
     };
     getUser();
   }, [postedBy]);
+  const handleDelete = async (e) => {
+    e.preventDefault();
+    try {
+      if (!window.confirm("Are you sure you want to delete")) return;
+      const res = await fetch(
+        `http://localhost:5000/api/posts/delete/${post._id}`,
+        {
+          method: "DELETE",
+          headers: { "Content-Type": "application/json" },
+          credentials: "include",
+        }
+      );
+      const data = await res.json();
+      if (data.error) {
+        showToast("Error", data.error, "error");
+        return;
+      }
+      showToast("Success", data.message, "success");
+    } catch (error) {
+      showToast("Error", error.message, "error");
+      return;
+    }
+  };
   if (!user) return null;
   return (
     <Link
@@ -119,6 +146,9 @@ function Post({ post, postedBy }) {
               <Text fontStyle={"xs"} color={"gray.light"}>
                 {formatDistanceToNow(new Date(post.createdAt))} Ago
               </Text>
+              {user._id === currentUser?._id && (
+                <DeleteIcon onClick={handleDelete} />
+              )}
             </Flex>
           </Flex>
           <Text fontSize={"small"}>{post.postTitle}</Text>

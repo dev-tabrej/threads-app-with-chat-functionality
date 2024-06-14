@@ -6,8 +6,8 @@ import Actions from "../components/Actions";
 import Comments from "../components/Comments";
 import { useParams } from "react-router-dom";
 
-function Postpage({ likes, replies, userImage }) {
-  const [liked, setLiked] = useState(false);
+function Postpage() {
+  const [user, setUser] = useState(null);
   const { username } = useParams();
   return (
     <>
@@ -33,7 +33,7 @@ function Postpage({ likes, replies, userImage }) {
         <Text fontSize={"small"}>This is my first post</Text>
         <Image src={"/post1.png"} alt={"post"} />
         <Flex gap={2} mt={2} color={"gray"}>
-          <Actions liked={liked} setLiked={setLiked} />
+          <Actions post={post} />
         </Flex>
         <Flex gap={2} alignItems={"center"} color={"gray"} fontSize={"sm"}>
           <Text fontStyle={"sm"}>{` ${replies} Replies`}</Text>
@@ -52,18 +52,6 @@ function Postpage({ likes, replies, userImage }) {
           user={"Johaib"}
           likes={100}
           replies={124}
-        />
-        <Comments
-          comment={`You are doing great man`}
-          user={"Motasim"}
-          likes={172}
-          replies={203}
-        />
-        <Comments
-          comment={`You are doing great man`}
-          user={"Arbaz"}
-          likes={342}
-          replies={223}
         />
       </Flex>
     </>

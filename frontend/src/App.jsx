@@ -39,16 +39,7 @@ function App() {
           element={user ? <UpdateUser /> : <Navigate to="/auth" />}
         />
         <Route path="/:username" element={<Userpage />} />
-        <Route
-          path="/:username/posts/:pid"
-          element={
-            <Postpage
-              likes={103}
-              replies={264}
-              userImage={"/zuck-avatar.png"}
-            />
-          }
-        />
+        <Route path="/:username/posts/:pid" element={<Postpage />} />
       </Routes>
       {user && <LogoutButton />}
       {user && <CreatePost />}
