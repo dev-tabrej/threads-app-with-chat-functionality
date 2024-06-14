@@ -151,7 +151,9 @@ function Post({ post, postedBy }) {
               )}
             </Flex>
           </Flex>
-          <Text fontSize={"small"}>{post.postTitle}</Text>
+          <Text fontSize={"small"} fontWeight={"bold"} my={2}>
+            {post.postTitle}
+          </Text>
           {post.img && <Image src={post.img} alt={"post"} />}
           <Flex gap={2} mt={2} color={"gray"}>
             <Actions post={post} />

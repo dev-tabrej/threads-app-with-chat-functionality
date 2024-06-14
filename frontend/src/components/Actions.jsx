@@ -9,12 +9,14 @@ function Actions({ post }) {
   const user = useRecoilValue(userAtom);
   const showToast = useShowToast();
 
-  const [liked, setLiked] = useState(post.likes.includes(user?._id));
+  const [liked, setLiked] = useState(post?.likes.includes(user?._id));
   const [isLiking, setIsLiking] = useState(false);
   const [isReplying, setIsReplying] = useState(false);
   const handleLikeUnlike = async () => {
-    if (!user) showToast("Error", "User not valid to like", "error");
-    return;
+    if (!user) {
+      showToast("Error", "User not valid to like", "error");
+      return;
+    }
     if (isLiking) return;
     setIsLiking(true);
     try {
@@ -103,9 +105,9 @@ function Actions({ post }) {
         <ShareSVG />
       </Flex>
       <Flex gap={2} alignItems={"center"} color={"gray"} fontSize={"sm"}>
-        <Text fontStyle={"sm"}>{`${post.replies.length} Replies`}</Text>
+        <Text fontStyle={"sm"}>{`${post?.replies.length} Replies`}</Text>
         <Box height={1} w={1} borderRadius={"50%"} bg={"gray"}></Box>
-        <Text fontStyle={"sm"}>{`${post.likes.length} Likes`}</Text>
+        <Text fontStyle={"sm"}>{`${post?.likes.length} Likes`}</Text>
       </Flex>
     </Flex>
   );

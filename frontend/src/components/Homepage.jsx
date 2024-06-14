@@ -14,7 +14,7 @@ function Homepage() {
       try {
         // Retrieve the token from localStorage
         const token = localStorage.getItem("user-threads");
-        console.log(token); // Debugging: Ensure the token is logged correctly
+        // console.log(token); // Debugging: Ensure the token is logged correctly
         if (!token) {
           throw new Error("No user-threads token found in localStorage");
         }
@@ -28,7 +28,7 @@ function Homepage() {
           credentials: "include", // Include credentials to send cookies
         });
         const data = await res.json();
-        console.log(data);
+        // console.log(data);
         if (data.error) {
           showToast("Error", data.error, "error");
           return;
