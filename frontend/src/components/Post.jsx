@@ -6,10 +6,11 @@ import Actions from "./Actions";
 import useShowToast from "../hooks/useToast";
 import { formatDistanceToNow } from "date-fns";
 import { DeleteIcon } from "@chakra-ui/icons";
-import { useRecoilValue } from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
 import userAtom from "../atoms/userAtom";
+import postAtom from "../atoms/postAtom";
 function Post({ post, postedBy }) {
-  const [liked, setLiked] = useState(false);
+  const [posts, setPosts] = useRecoilState(postAtom);
   const [user, setUser] = useState(null);
   const currentUser = useRecoilValue(userAtom);
   const showToast = useShowToast();
@@ -57,6 +58,7 @@ function Post({ post, postedBy }) {
         return;
       }
       showToast("Success", data.message, "success");
+      setPosts(posts.filter((p) => p._id !== post._id));
     } catch (error) {
       showToast("Error", error.message, "error");
       return;
@@ -147,7 +149,7 @@ function Post({ post, postedBy }) {
                 {formatDistanceToNow(new Date(post.createdAt))} Ago
               </Text>
               {user._id === currentUser?._id && (
-                <DeleteIcon onClick={handleDelete} />
+                <DeleteIcon onClick={handleDelete} cursor={"pointer"} />
               )}
             </Flex>
           </Flex>

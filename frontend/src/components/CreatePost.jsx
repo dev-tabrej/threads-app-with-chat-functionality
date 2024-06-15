@@ -22,8 +22,9 @@ import React, { useRef, useState } from "react";
 import useImgPreview from "../hooks/useImgPreview.js";
 import { BsFillImageFill } from "react-icons/bs";
 import useShowToast from "../hooks/useToast.js";
-import { useRecoilValue } from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
 import userAtom from "../atoms/userAtom.js";
+import postAtom from "../atoms/postAtom.js";
 
 const MAX_CHAR = 500;
 function CreatePost() {
@@ -35,6 +36,7 @@ function CreatePost() {
   const { handleImgChange, imgUrl, setImgUrl } = useImgPreview();
   const ShowToast = useShowToast();
   const user = useRecoilValue(userAtom);
+  const [posts, setPosts] = useRecoilState(postAtom);
   const handleTextChange = (e) => {
     const inputText = e.target.value;
     // setPostText(e.target.value);
@@ -69,6 +71,7 @@ function CreatePost() {
       onClose();
       setPostText("");
       setImgUrl("");
+      setPosts([data, ...posts]);
     } catch (error) {
       ShowToast("Error", error, "error");
     } finally {

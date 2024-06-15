@@ -5,9 +5,13 @@ import { BsThreeDots } from "react-icons/bs";
 import { formatDistanceToNow } from "date-fns";
 import { useRecoilValue } from "recoil";
 import userAtom from "../atoms/userAtom";
+import { DeleteIcon } from "@chakra-ui/icons";
+import useShowToast from "../hooks/useToast";
 
-function Comments({ reply }) {
-  // const user = useRecoilValue(userAtom);
+function Comments({ reply, lastReply }) {
+  const currentUser = useRecoilValue(userAtom);
+  const showToast = useShowToast();
+
   return (
     <>
       <Flex w="full" justifyContent="flex-start" gap={2} my={4}>
@@ -29,7 +33,7 @@ function Comments({ reply }) {
           <Text fontSize="small">{reply.text}</Text>
         </Flex>
       </Flex>
-      <Divider />
+      {!lastReply && <Divider />}
     </>
   );
 }

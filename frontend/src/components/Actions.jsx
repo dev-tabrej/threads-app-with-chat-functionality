@@ -1,14 +1,15 @@
 import React from "react";
 import { Box, Flex, Text } from "@chakra-ui/react";
 import { useState } from "react";
-import { useRecoilValue } from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
 import userAtom from "./../atoms/userAtom";
 import useShowToast from "../hooks/useToast";
+import postAtom from "../atoms/postAtom";
 
 function Actions({ post }) {
   const user = useRecoilValue(userAtom);
   const showToast = useShowToast();
-
+  const [posts, setPosts] = useRecoilState(postAtom);
   const [liked, setLiked] = useState(post?.likes.includes(user?._id));
   const [isLiking, setIsLiking] = useState(false);
   const [isReplying, setIsReplying] = useState(false);
@@ -34,13 +35,20 @@ function Actions({ post }) {
         return;
       }
       console.log(data);
-      if (!liked) {
-        post.likes.push(user._id);
-        setLiked(!liked);
-      } else {
-        post.likes = post.likes.filter((like) => like !== user._id);
-        setLiked(!liked);
-      }
+      setLiked(!liked);
+      const updatedPosts = posts.map((p) => {
+        if (p._id === post._id) {
+          return {
+            ...p,
+            likes: liked
+              ? p.likes.filter((id) => id !== user._id)
+              : [...p.likes, user._id],
+          };
+        }
+        return p;
+      });
+      setPosts(updatedPosts);
+      showToast("Succes", data.message, "success");
     } catch (error) {
       showToast("Error", error, "error");
     } finally {
@@ -79,8 +87,18 @@ function Actions({ post }) {
         showToast("Error", data.error, "error");
         return;
       }
-      console.log(data);
-      showToast("Success", data.message, "success");
+      console.log("this is a reply", data);
+      const updatedPosts = posts.map((p) => {
+        if (p._id === post._id) {
+          return {
+            ...p,
+            replies: [...p.replies, data],
+          };
+        }
+        return p;
+      });
+      showToast("Success", "Reply added successfully", "success");
+      setPosts(updatedPosts);
     } catch (error) {
       showToast("Error", error, "error");
     } finally {

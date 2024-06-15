@@ -2,15 +2,20 @@ import React, { useEffect, useState } from "react";
 import { Flex, Spinner } from "@chakra-ui/react";
 import useShowToast from "../hooks/useToast";
 import Post from "./Post.jsx";
+import userAtom from "../atoms/userAtom.js";
+import { useRecoilState } from "recoil";
+import postAtom from "../atoms/postAtom.js";
 
 function Homepage() {
   const showToast = useShowToast();
-  const [posts, setPosts] = useState([]);
+  const [posts, setPosts] = useRecoilState(postAtom);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const getFeedPost = async () => {
+      setPosts([]);
       setLoading(true);
+
       try {
         // Retrieve the token from localStorage
         const token = localStorage.getItem("user-threads");

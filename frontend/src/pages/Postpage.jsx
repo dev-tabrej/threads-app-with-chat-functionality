@@ -16,16 +16,18 @@ import useShowToast from "../hooks/useToast";
 import useGetUserProfile from "../hooks/useGetUserProfile.js";
 import { DeleteIcon } from "@chakra-ui/icons";
 import { formatDistanceToNow } from "date-fns";
-import { useRecoilValue } from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
 import userAtom from "../atoms/userAtom.js";
+import postAtom from "../atoms/postAtom.js";
 
 function Postpage() {
   const { user, loading } = useGetUserProfile();
-  const [post, setPost] = useState(null);
+  const [posts, setPosts] = useRecoilState(postAtom);
   const showToast = useShowToast();
   const { pid } = useParams();
   const currentUser = useRecoilValue(userAtom);
   const navigate = useNavigate();
+  const currentPost = posts[0];
   useEffect(() => {
     const getPost = async () => {
       try {
@@ -42,8 +44,8 @@ function Postpage() {
           showToast("Error", data.error, "error");
           return;
         }
-        setPost(data);
         console.log(data);
+        setPosts([data]);
       } catch (error) {
         showToast("Error", error.message, "error");
       }
@@ -55,7 +57,7 @@ function Postpage() {
     try {
       if (!window.confirm("Are you sure you want to delete")) return;
       const res = await fetch(
-        `http://localhost:5000/api/posts/delete/${post._id}`,
+        `http://localhost:5000/api/posts/delete/${currentPost._id}`,
         {
           method: "DELETE",
           headers: { "Content-Type": "application/json" },
@@ -83,7 +85,7 @@ function Postpage() {
     );
   }
 
-  if (!post) return null;
+  if (!currentPost) return null;
 
   return (
     <Flex flexDirection={"column"} w={"full"}>
@@ -102,29 +104,33 @@ function Postpage() {
         </Flex>
         <Flex gap={2} alignItems={"center"}>
           <Text fontStyle={"xs"} color={"gray.light"}>
-            {formatDistanceToNow(new Date(post.createdAt))} Ago
+            {formatDistanceToNow(new Date(currentPost.createdAt))} Ago
           </Text>
           {user._id === currentUser?._id && (
-            <DeleteIcon onClick={handleDelete} />
+            <DeleteIcon onClick={handleDelete} cursor={"pointer"} />
           )}
         </Flex>
       </Flex>
 
       <Text fontSize={"small"} fontWeight={"bold"} my={2}>
-        {post.postTitle}
+        {currentPost.postTitle}
       </Text>
-      {post.img && <Image src={post.img} alt={"post"} />}
+      {currentPost.img && <Image src={currentPost.img} alt={"post"} />}
       <Flex gap={2} mt={2} color={"gray"}>
-        <Actions post={post} />
-      </Flex>
-      <Flex gap={2} alignItems={"center"} color={"gray"} fontSize={"sm"}>
-        {/* <Text fontStyle={"sm"}>{""}</Text>   */}
-        {/* <Box height={1} w={1} borderRadius={"50%"} bg={"gray"}></Box> */}
-        {/* <Text fontStyle={"sm"}>{post.likes.length}</Text> */}
+        <Actions post={currentPost} />
       </Flex>
       <Divider></Divider>
-      {post.replies.length > 0 ? (
-        post.replies.map((reply) => <Comments key={reply._id} reply={reply} />)
+      {currentPost.replies.length > 0 ? (
+        currentPost.replies.map((reply) => (
+          <Comments
+            key={reply._id}
+            reply={reply}
+            lastReply={
+              reply._id ===
+              currentPost.replies[currentPost.replies.length - 1]._id
+            }
+          />
+        ))
       ) : (
         <Text>No replies yet</Text>
       )}

@@ -31,7 +31,7 @@ const createPost = async (req, res) => {
       img,
     });
     await newPost.save();
-    res.status(201).json({ message: "post created succesfully", newPost });
+    res.status(201).json(newPost);
   } catch (error) {
     res.status(500).json({ error: error.message });
     console.log("occured error: " + error.message);
@@ -133,7 +133,7 @@ const repliesToPost = async (req, res) => {
     const reply = { text, userProfilePic, username, userId };
     post.replies.push(reply);
     post.save();
-    res.status(200).json({ message: "Reply added succesfully" });
+    res.status(200).json(reply);
   } catch (error) {
     console.error("An error occurred: " + error.message);
     res.status(500).json({ error: error.message });

@@ -1,19 +1,16 @@
 import React, { useEffect, useState } from "react";
 import Userheader from "../components/Userheader";
-import Postpage from "../components/Userpost";
-import Header from "../components/Header";
 import { useParams } from "react-router-dom";
-// import Userpost from "../components/Userpost";
 import useShowToast from "../hooks/useToast";
 import { Flex, Spinner, Text } from "@chakra-ui/react";
 import Post from "../components/Post";
 import useGetUserProfile from "../hooks/useGetUserProfile";
+import { useRecoilState } from "recoil";
+import postAtom from "../atoms/postAtom";
 function Userpage() {
-  // const [user, setUser] = useState(null);
   const { user, loading } = useGetUserProfile();
   const { username } = useParams();
-  // const [loading, setLoading] = useState(true);
-  const [posts, setPosts] = useState([]);
+  const [posts, setPosts] = useRecoilState(postAtom);
   const [fetchingPosts, setFetchingPosts] = useState(false);
   const ShowToast = useShowToast();
 
@@ -44,7 +41,7 @@ function Userpage() {
     };
 
     getPosts();
-  }, [username]);
+  }, [username, setPosts]);
   if (!user && loading) {
     return (
       <Flex justifyContent={"center"}>
