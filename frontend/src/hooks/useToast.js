@@ -6,7 +6,7 @@ function useShowToast() {
       title,
       description,
       status,
-      duration: 9000,
+      duration: 1000,
       isClosable: true,
     });
   };

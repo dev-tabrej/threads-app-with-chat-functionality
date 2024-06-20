@@ -3,6 +3,7 @@ import React from "react";
 import userAtom from "../atoms/userAtom";
 import { useSetRecoilState } from "recoil";
 import useShowToast from "../hooks/useToast";
+import { MdOutlineLogout } from "react-icons/md";
 
 function LogoutButton() {
   const setUser = useSetRecoilState(userAtom);
@@ -26,13 +27,8 @@ function LogoutButton() {
     }
   };
   return (
-    <Button
-      position={"fixed"}
-      top={"30px"}
-      right={"30px"}
-      size={"sm"}
-      onClick={handleLogout}
-    >
+    <Button size={"sm"} onClick={handleLogout}>
+      <MdOutlineLogout />
       Logout
     </Button>
   );

@@ -6,6 +6,7 @@ import { useRecoilValue } from "recoil";
 import { Link as RouterLink } from "react-router-dom";
 import { RxAvatar } from "react-icons/rx";
 import { AiFillHome } from "react-icons/ai";
+import LogoutButton from "./LogoutButton";
 function Header() {
   const { colorMode, toggleColorMode } = useColorMode();
   const user = useRecoilValue(userAtom);
@@ -26,9 +27,12 @@ function Header() {
       />
 
       {user && (
-        <Link as={RouterLink} to={`/${user.username}`}>
-          <RxAvatar size={24} />
-        </Link>
+        <Flex justifyContent={"flex-end"} alignItems={"center"} gap={2}>
+          <Link as={RouterLink} to={`/${user.username}`}>
+            <RxAvatar size={24} />
+          </Link>
+          {user && <LogoutButton />}
+        </Flex>
       )}
     </Flex>
   );

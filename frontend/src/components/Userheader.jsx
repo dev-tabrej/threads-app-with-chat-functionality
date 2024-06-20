@@ -9,13 +9,12 @@ import userAtom from "../atoms/userAtom";
 import { useRecoilState } from "recoil";
 import useShowToast from "../hooks/useToast.js"; // Import the custom hook
 import { useNavigate } from "react-router-dom"; // Import useNavigate
+import useFollowUnfollow from "../hooks/useFollowUnfollow.js";
 
 function Userheader({ user }) {
-  const [loading, setLoading] = useState(false);
   const [currentUser] = useRecoilState(userAtom);
-  const [following, setFollowing] = useState(
-    currentUser && user.followers.includes(currentUser._id)
-  );
+  // const [loading, setLoading] = useState(false);
+  const { handleFollowUnfollow, updating, following } = useFollowUnfollow(user);
 
   const showToast = useShowToast(); // Use the custom hook
   const navigate = useNavigate(); // Initialize useNavigate
@@ -28,47 +27,6 @@ function Userheader({ user }) {
   };
 
   // Function to handle follow/unfollow button click
-  const handleFollowUnfollow = async () => {
-    if (!currentUser) {
-      showToast("Not logged in", "Log in to follow someone.", "error");
-      return;
-    }
-
-    setLoading(true);
-
-    try {
-      const res = await fetch(
-        `http://localhost:5000/api/users/follow/${user._id}`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          credentials: "include",
-        }
-      );
-      const data = await res.json();
-
-      if (data.error) {
-        showToast("Error", data.error, "error");
-        return;
-      }
-
-      if (following) {
-        showToast("User Unfollowed", data.message, "success");
-        user.followers = user.followers.filter(
-          (follower) => follower !== currentUser._id
-        );
-      } else {
-        showToast("User Followed", data.message, "success");
-        user.followers.push(currentUser._id);
-      }
-
-      setFollowing(!following);
-    } catch (error) {
-      showToast("Error", error.toString(), "error");
-    } finally {
-      setLoading(false);
-    }
-  };
 
   // Function to handle update user button click
   const handleUpdateUser = () => {
@@ -101,11 +59,11 @@ function Userheader({ user }) {
       </Flex>
       <Text>{user.bio}</Text>
       {user._id !== currentUser?._id ? (
-        <Button size={"sm"} onClick={handleFollowUnfollow} isLoading={loading}>
+        <Button size={"sm"} onClick={handleFollowUnfollow} isLoading={updating}>
           {following ? "Unfollow" : "Follow"}
         </Button>
       ) : (
-        <Button size={"sm"} onClick={handleUpdateUser} isLoading={loading}>
+        <Button size={"sm"} onClick={handleUpdateUser}>
           Update User
         </Button>
       )}

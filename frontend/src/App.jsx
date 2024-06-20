@@ -5,6 +5,7 @@ import {
   Route,
   Routes,
   Navigate,
+  useLocation,
 } from "react-router-dom";
 
 import "./App.css";
@@ -22,8 +23,11 @@ import CreatePost from "./components/CreatePost";
 function App() {
   const user = useRecoilValue(userAtom);
   // console.log(user);
+  const { pathname } = useLocation();
   return (
-    <Container maxW="620px">
+    <Container
+      maxW={pathname === "/" ? { base: "620px", md: "900px" } : "620px"}
+    >
       <Header />
       <Routes>
         <Route
@@ -41,7 +45,7 @@ function App() {
         <Route path="/:username" element={<Userpage />} />
         <Route path="/:username/post/:pid" element={<Postpage />} />
       </Routes>
-      {user && <LogoutButton />}
+
       {user && <CreatePost />}
     </Container>
   );
