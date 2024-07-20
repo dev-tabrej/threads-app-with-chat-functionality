@@ -7,6 +7,7 @@ import Post from "../components/Post";
 import useGetUserProfile from "../hooks/useGetUserProfile";
 import { useRecoilState } from "recoil";
 import postAtom from "../atoms/postAtom";
+import baseUrl from "../hooks/url.js";
 function Userpage() {
   const { user, loading } = useGetUserProfile();
   const { username } = useParams();
@@ -16,22 +17,28 @@ function Userpage() {
 
   useEffect(() => {
     const getPosts = async () => {
+      const token = localStorage.getItem("user-threads");
       setFetchingPosts(true);
       try {
-        const res = await fetch(
-          `http://localhost:5000/api/posts/user/${username}`,
-          {
-            method: "GET",
-            headers: { "Content-type": "application/json" },
-            credentials: "include",
-          }
-        );
+        const res = await fetch(`${baseUrl}/api/posts/user/${username}`,{
+          method:"GET",
+          headers: {
+            "Content-Type": "application/json",
+            'Authorization': `Bearer ${token}`,
+          },
+          credentials: "include",
+        });
         const data = await res.json();
-        // console.log(data);
-        if (data.error) {
-          ShowToast("Eror", data.error, "error");
+        
+        console.log(data); // Log the data to verify its structure
+    
+        if (Array.isArray(data)) {
+          setPosts(data);
+        } else {
+          console.error("Expected an array but got:", data);
+          ShowToast("Error", "Unexpected data format", "error");
+          setPosts([]);
         }
-        setPosts(data);
       } catch (error) {
         ShowToast("Error", error.message, "error");
         setPosts([]);
@@ -39,6 +46,7 @@ function Userpage() {
         setFetchingPosts(false);
       }
     };
+    
 
     getPosts();
   }, [username, setPosts]);

@@ -19,6 +19,7 @@ import { formatDistanceToNow } from "date-fns";
 import { useRecoilState, useRecoilValue } from "recoil";
 import userAtom from "../atoms/userAtom.js";
 import postAtom from "../atoms/postAtom.js";
+import baseUrl from "../hooks/url";
 
 function Postpage() {
   const { user, loading } = useGetUserProfile();
@@ -30,15 +31,15 @@ function Postpage() {
   const currentPost = posts[0];
   useEffect(() => {
     const getPost = async () => {
+      const token = localStorage.getItem("user-threads");
       try {
-        const res = await fetch(
-          `http://localhost:5000/api/posts/getpost/${pid}`,
-          {
-            method: "GET",
-            headers: { "Content-Type": "application/json" },
-            credentials: "include",
-          }
-        );
+        
+        const res = await fetch(`${baseUrl}/api/posts/getpost/${pid}`, {
+          method: "GET",
+          headers: { "Content-Type": "application/json" ,"authorization": `bearer ${token}`},
+          credentials: "include",
+          
+        });
         const data = await res.json();
         if (data.error) {
           showToast("Error", data.error, "error");
@@ -57,7 +58,7 @@ function Postpage() {
     try {
       if (!window.confirm("Are you sure you want to delete")) return;
       const res = await fetch(
-        `http://localhost:5000/api/posts/delete/${currentPost._id}`,
+        `${baseUrl}/api/posts/delete/${currentPost._id}`,
         {
           method: "DELETE",
           headers: { "Content-Type": "application/json" },

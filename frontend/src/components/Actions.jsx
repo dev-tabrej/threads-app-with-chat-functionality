@@ -5,6 +5,7 @@ import { useRecoilState, useRecoilValue } from "recoil";
 import userAtom from "./../atoms/userAtom";
 import useShowToast from "../hooks/useToast";
 import postAtom from "../atoms/postAtom";
+import baseUrl from "../hooks/url.js";
 
 function Actions({ post }) {
   const user = useRecoilValue(userAtom);
@@ -21,14 +22,11 @@ function Actions({ post }) {
     if (isLiking) return;
     setIsLiking(true);
     try {
-      const res = await fetch(
-        `http://localhost:5000/api/posts/like/${post._id}`,
-        {
-          method: "PUT",
-          headers: { "Content-Type": "application/json" },
-          credentials: "include",
-        }
-      );
+      const res = await fetch(`${baseUrl}/api/posts/like/${post._id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+      });
       const data = await res.json();
       if (data.error) {
         showToast("Error", data.error, "error");
@@ -71,17 +69,14 @@ function Actions({ post }) {
         showToast("Error", "Comment cannot be empty", "error");
         return;
       }
-      const res = await fetch(
-        `http://localhost:5000/api/posts/reply/${post._id}`,
-        {
-          method: "PUT",
-          headers: { "Content-Type": "application/json" },
-          credentials: "include",
-          body: JSON.stringify({
-            text: commentText.trim(),
-          }),
-        }
-      );
+      const res = await fetch(`${baseUrl}/api/posts/reply/${post._id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({
+          text: commentText.trim(),
+        }),
+      });
       const data = await res.json();
       if (data.error) {
         showToast("Error", data.error, "error");

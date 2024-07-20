@@ -20,10 +20,10 @@ app.use(express.json({ limit: "50mb" }));
 app.use(express.urlencoded({ limit: "50mb", extended: true }));
 app.use(
   cors({
-    credentials: true,
-    origin: "http://localhost:3000", // Your frontend origin
+    // credentials: true,
+    // origin: "http://localhost:3000", // Your frontend origin
     methods: ["GET", "POST", "PUT", "DELETE"],
-    allowedHeaders: ["Content-Type", "Authorization"],
+    // allowedHeaders: ["Content-Type", "Authorization"],
   })
 );
 

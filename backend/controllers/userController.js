@@ -191,7 +191,7 @@ const getProfile = async (req, res) => {
 
 const getSuggestedUsers = async (req, res) => {
   try {
-    const userId = req.user._id;
+    const userId = req.user._id; // Ensure req.user is correctly populated
     const usersFollowedByYou = await User.findById(userId).select("following");
     const users = await User.aggregate([
       { $match: { _id: { $ne: userId } } },
@@ -208,6 +208,7 @@ const getSuggestedUsers = async (req, res) => {
     console.log("Occurred error: " + error.message);
   }
 };
+
 export {
   signupUser,
   loginUser,

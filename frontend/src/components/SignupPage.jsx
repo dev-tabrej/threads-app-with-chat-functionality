@@ -20,6 +20,7 @@ import { ViewIcon, ViewOffIcon } from "@chakra-ui/icons";
 import useShowToast from "../hooks/useToast";
 import { useSetRecoilState } from "recoil";
 import userAtom from "../atoms/userAtom";
+import baseUrl from "../hooks/url";
 
 export default function SignupPage({ haveAccount, setHaveAccount }) {
   const [showPassword, setShowPassword] = useState(false);
@@ -37,7 +38,7 @@ export default function SignupPage({ haveAccount, setHaveAccount }) {
     console.log("these are your inputs", inputs);
     setLoading(true);
     try {
-      const res = await fetch("http://localhost:5000/api/users/signup", {
+      const res = await fetch(`${baseUrl}/api/users/signup`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(inputs),
@@ -54,7 +55,7 @@ export default function SignupPage({ haveAccount, setHaveAccount }) {
       setUser(data);
       // Your signup logic here
     } catch (error) {
-      showToast("Error", error, "error");
+      showToast("Error", error.message, "error");
     } finally {
       setLoading(false);
     }

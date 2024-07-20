@@ -13,6 +13,7 @@ import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import useShowToast from "../hooks/useToast";
 import SuggestedUser from "./SuggestedUser";
+import baseUrl from "../hooks/url";
 
 function SuggestedUsers() {
   const [loading, setLoading] = useState(true);
@@ -20,16 +21,18 @@ function SuggestedUsers() {
   // const following = false;
   const updating = false;
   const showToast = useShowToast();
-  const users = [1, 2, 3, 4, 5]; // Changed last 5 to 6 for unique keys
 
   useEffect(() => {
     const getSuggestedUsers = async () => {
       setLoading(true);
 
       try {
-        const res = await fetch(`http://localhost:5000/api/users/suggested`, {
+        const res = await fetch(`${baseUrl}/api/users/suggested`, {
           method: "GET",
-          headers: { "Content-Type": "application/json" },
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`,
+          },
           credentials: "include",
         });
         const data = await res.json();
@@ -39,7 +42,7 @@ function SuggestedUsers() {
         }
         setSuggestedUsers(data);
       } catch (error) {
-        showToast("Error", error, "error");
+        showToast("Error", error.message, "error");
       } finally {
         setLoading(false);
       }

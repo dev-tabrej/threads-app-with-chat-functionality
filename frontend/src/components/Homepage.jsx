@@ -6,6 +6,7 @@ import userAtom from "../atoms/userAtom.js";
 import { useRecoilState } from "recoil";
 import postAtom from "../atoms/postAtom.js";
 import SuggestedUsers from "./SuggestedUsers.jsx";
+import baseUrl from "../hooks/url";
 
 function Homepage() {
   const showToast = useShowToast();
@@ -20,16 +21,18 @@ function Homepage() {
       try {
         // Retrieve the token from localStorage
         const token = localStorage.getItem("user-threads");
+        console.log(token);
         // console.log(token); // Debugging: Ensure the token is logged correctly
         if (!token) {
           throw new Error("No user-threads token found in localStorage");
         }
 
         // Send the token in the request and include credentials
-        const res = await fetch("http://localhost:5000/api/posts/feed", {
+        const res = await fetch(`${baseUrl}/api/posts/feed`, {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`,
           },
           credentials: "include", // Include credentials to send cookies
         });

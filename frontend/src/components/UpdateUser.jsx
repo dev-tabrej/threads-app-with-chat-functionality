@@ -15,6 +15,7 @@ import { useRecoilState } from "recoil";
 import userAtom from "../atoms/userAtom";
 import useImgPreview from "../hooks/useImgPreview";
 import useShowToast from "../hooks/useToast";
+import baseUrl from "../hooks/url";
 
 export default function UpdateUser() {
   const [user, setUser] = useRecoilState(userAtom);
@@ -41,18 +42,15 @@ export default function UpdateUser() {
         profilePic: imgUrl || inputs.profilePic, // Ensure profilePic is handled correctly
       };
 
-      const res = await fetch(
-        `http://localhost:5000/api/users/update/${user._id}`,
-        {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`, // Ensure the token is added in this format
-          },
-          credentials: "include",
-          body: JSON.stringify(updatedData),
-        }
-      );
+      const res = await fetch(`${baseUrl}/api/users/update/${user._id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`, // Ensure the token is added in this format
+        },
+        credentials: "include",
+        body: JSON.stringify(updatedData),
+      });
       const data = await res.json();
 
       if (!res.ok) {

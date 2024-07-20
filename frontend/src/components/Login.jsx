@@ -19,6 +19,7 @@ import useShowToast from "../hooks/useToast";
 import userAtom from "../atoms/userAtom";
 import { useSetRecoilState } from "recoil";
 import { ViewIcon, ViewOffIcon } from "@chakra-ui/icons";
+import baseUrl from "../hooks/url";
 
 export default function Login({ haveAccount, setHaveAccount }) {
   const [inputs, setInputs] = useState({ username: "", password: "" });
@@ -35,7 +36,7 @@ export default function Login({ haveAccount, setHaveAccount }) {
         showToast("Error", "Enter a valid username and Password", "error");
         return;
       }
-      const res = await fetch("http://localhost:5000/api/users/loginUser", {
+      const res = await fetch(`${baseUrl}/api/users/loginUser`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(inputs),
@@ -50,7 +51,7 @@ export default function Login({ haveAccount, setHaveAccount }) {
       localStorage.setItem("user-threads", JSON.stringify(data));
       setUser(data);
     } catch (error) {
-      showToast("Error", error, "error");
+      showToast("Error", error.message, "error");
     } finally {
       setLoading(false);
     }

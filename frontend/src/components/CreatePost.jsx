@@ -25,6 +25,7 @@ import useShowToast from "../hooks/useToast.js";
 import { useRecoilState, useRecoilValue } from "recoil";
 import userAtom from "../atoms/userAtom.js";
 import postAtom from "../atoms/postAtom.js";
+import baseUrl from "../hooks/url";
 
 const MAX_CHAR = 500;
 function CreatePost() {
@@ -52,7 +53,7 @@ function CreatePost() {
   const handleCreatePost = async () => {
     setLoading(true);
     try {
-      const res = await fetch(`http://localhost:5000/api/posts/create`, {
+      const res = await fetch(`${baseUrl}/api/posts/create`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

@@ -9,6 +9,7 @@ import { DeleteIcon } from "@chakra-ui/icons";
 import { useRecoilState, useRecoilValue } from "recoil";
 import userAtom from "../atoms/userAtom";
 import postAtom from "../atoms/postAtom";
+import baseUrl from "../hooks/url";
 function Post({ post, postedBy }) {
   const [posts, setPosts] = useRecoilState(postAtom);
   const [user, setUser] = useState(null);
@@ -17,12 +18,16 @@ function Post({ post, postedBy }) {
   const navigate = useNavigate();
   useEffect(() => {
     const getUser = async () => {
+      const token =localStorage.getItem("user-threads")
       try {
+
         const res = await fetch(
           `http://localhost:5000/api/users/profile/${postedBy}`, // Ensure the URL is correct
           {
             method: "GET",
-            headers: { "Content-Type": "application/json" },
+            headers: { "Content-Type": "application/json",
+              "Authorization": `Bearer ${token}`
+             },
             credentials: "include",
           }
         );
@@ -44,14 +49,11 @@ function Post({ post, postedBy }) {
     e.preventDefault();
     try {
       if (!window.confirm("Are you sure you want to delete")) return;
-      const res = await fetch(
-        `http://localhost:5000/api/posts/delete/${post._id}`,
-        {
-          method: "DELETE",
-          headers: { "Content-Type": "application/json" },
-          credentials: "include",
-        }
-      );
+      const res = await fetch(`${baseUrl}/api/posts/delete/${post._id}`, {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+      });
       const data = await res.json();
       if (data.error) {
         showToast("Error", data.error, "error");

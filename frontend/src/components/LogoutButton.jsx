@@ -4,13 +4,14 @@ import userAtom from "../atoms/userAtom";
 import { useSetRecoilState } from "recoil";
 import useShowToast from "../hooks/useToast";
 import { MdOutlineLogout } from "react-icons/md";
+import baseUrl from "../hooks/url";
 
 function LogoutButton() {
   const setUser = useSetRecoilState(userAtom);
   const showToast = useShowToast();
   const handleLogout = async () => {
     try {
-      const res = await fetch("http://localhost:5000/api/users/logoutUser", {
+      const res = await fetch(`${baseUrl}/api/users/logoutUser`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
       });
@@ -23,7 +24,7 @@ function LogoutButton() {
       localStorage.removeItem("user-threads");
       setUser(null);
     } catch (error) {
-      showToast("Error: ", error, "error");
+      showToast("Error: ", error.message, "error");
     }
   };
   return (
