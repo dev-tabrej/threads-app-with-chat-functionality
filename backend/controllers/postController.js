@@ -150,6 +150,7 @@ const getUserPosts = async (req, res) => {
     const posts = await Post.find({ postedBy: user._id }).sort({
       createdAt: -1,
     });
+    console.log(posts)
     res.status(200).json(posts);
   } catch (error) {
     console.error("An error occurred: " + error.message);

@@ -25,7 +25,7 @@ function SuggestedUsers() {
   useEffect(() => {
     const getSuggestedUsers = async () => {
       setLoading(true);
-
+      const token=localStorage.getItem('user-threads');
       try {
         const res = await fetch(`${baseUrl}/api/users/suggested`, {
           method: "GET",
