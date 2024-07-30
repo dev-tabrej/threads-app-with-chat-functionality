@@ -10,6 +10,7 @@ function SuggestedUser({ user }) {
       justifyContent={"space-between"}
       alignItems={"center"}
       borderRadius={5}
+      // boxShadow={"dark-lg"}
       gap={2}
       key={user}
     >

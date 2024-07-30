@@ -26,17 +26,19 @@ function SuggestedUsers() {
     const getSuggestedUsers = async () => {
       setLoading(true);
       const token=localStorage.getItem('user-threads');
+      console.log("token before request :"+token)
       try {
         const res = await fetch(`${baseUrl}/api/users/suggested`, {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
-            "Authorization": `Bearer ${token}`,
+            "Authorization": token,
           },
           credentials: "include",
         });
         const data = await res.json();
         if (data.error) {
+          console.log(data.error+" inside try")
           showToast("Error", data.error, "error");
           return;
         }

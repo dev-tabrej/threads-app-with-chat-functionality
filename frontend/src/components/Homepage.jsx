@@ -21,7 +21,7 @@ function Homepage() {
       try {
         // Retrieve the token from localStorage
         const token = localStorage.getItem("user-threads");
-        console.log(token);
+        // console.log(token);
         // console.log(token); // Debugging: Ensure the token is logged correctly
         if (!token) {
           throw new Error("No user-threads token found in localStorage");
@@ -37,7 +37,7 @@ function Homepage() {
           credentials: "include", // Include credentials to send cookies
         });
         const data = await res.json();
-        // console.log(data);
+        // console.log(data); 
         if (data.error) {
           showToast("Error", data.error, "error");
           return;
@@ -71,7 +71,7 @@ function Homepage() {
           <Post key={post._id} post={post} postedBy={post.postedBy} />
         ))}
       </Box>
-      <Box flex={30} display={{ md: "block", base: "none" }}>
+      <Box flex={30} display={{ md: "block", base: "none" }} boxShadow={"dark-lg"} p={4} >
         <SuggestedUsers />
       </Box>
     </Flex>
